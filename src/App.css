@@ -1,5 +1,6 @@
 .App {
   text-align: center;
+  margin:0 150px ;
 }
 
 .App-logo {
@@ -36,3 +37,42 @@
     transform: rotate(360deg);
   }
 }
+.title_url_author{
+  text-align: left;
+  font-size: 11px;
+}
+td, th {
+  border: 1px solid #dddddd;
+ 
+  text-align: center;
+    padding: 8px;
+    font-size: small;
+    font-weight: bold;
+}
+table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+/* tr:nth-child(even) {
+  background-color: rgb(246, 246, 239);
+}
+tr:nth-child(odd) {
+  background-color: rgb(246, 246, 239)} */
+
+  tr:nth-child(even) {
+    background-color: rgb(228, 228, 221);
+  }
+  tr:nth-child(odd) {
+    background-color: rgb(219, 219, 210);
+  }
+  .buttons{
+    display: flex;
+    justify-content: flex-end;
+  }
+  .prev ,.next {
+    background: none;
+    border: none;
+    color: #ff7412;
+    cursor: pointer;;
+  }
