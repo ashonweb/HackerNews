@@ -2,6 +2,13 @@ import React from 'react';
 import logo from './logo.svg';
 import Content from './Components/Content'
 import './App.css';
+import {
+  Switch,
+  Route,
+  Link,
+  NavLink,
+
+} from "react-router-dom";
 
 function App() {
   return (
@@ -21,8 +28,10 @@ function App() {
         </a>
       </header> */}
       <Content />
+     
     </div>
   );
 }
+
 
 export default App;
