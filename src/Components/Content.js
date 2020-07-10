@@ -57,6 +57,8 @@ class Content extends React.Component {
         this.state = {
             search_by_date_front: [],
             page: 0,
+            upvote:0,
+            hide:false,
           
         }
     }
@@ -214,9 +216,46 @@ class Content extends React.Component {
 
             })
     }
+
+    
+
+ timeSince = (date) => {
+
+    var seconds = Math.floor((new Date() - date) / 1000);
+  
+    var interval = Math.floor(seconds / 31536000);
+  
+    if (interval > 1) {
+      return interval + " years";
+    }
+    interval = Math.floor(seconds / 2592000);
+    if (interval > 1) {
+      return interval + " months";
+    }
+    interval = Math.floor(seconds / 86400);
+    if (interval > 1) {
+      return interval + " days";
+    }
+    interval = Math.floor(seconds / 3600);
+    if (interval > 1) {
+      return interval + " hours";
+    }
+    interval = Math.floor(seconds / 60);
+    if (interval > 1) {
+      return interval + " minutes";
+    }
+    return Math.floor(seconds) + " seconds";
+  }
+  
+
     render() {
         const { search_by_date_story, search_by_date_front, next } = this.state
         let b = ((this.state.search_by_date_front).length !== 0);
+        let a = new Date();
+        console.log(a.toISOString())
+        var aDay = 24*60*60*1000;
+  console.log(this.timeSince(new Date(Date.now()-aDay)));
+  console.log(this.timeSince(new Date(Date.now()-aDay*2)));
         return (
             <>
                 {b ? <>
@@ -246,7 +285,7 @@ class Content extends React.Component {
                                     <img style={{ width: "20px", height: "20px", cursor: "pointer" }} src={arrow} />
                                 </td>
                                 <td className="title_url_author" component="th" scope="row">
-                                    {value.title} <span><a style={{ color: "grey", fontSize: "10px" }} href={value.url}>{value.url}</a></span>  <span style={{ color: "black", fontSize: "10px" }}>{value.author}</span>
+                            {value.title} <span><a style={{ color: "grey", fontSize: "10px" }} href={value.url}>{value.url}</a></span> <span style={{ color: "grey", fontSize: "10px" }}>by</span> <span style={{ color: "black", fontSize: "10px" }}>{value.author}</span> <span style= {{ color: "grey", fontSize: "10px" }}>{this.timeSince(Date.parse(value.created_at))} ago </span>
                                 </td>
 
                             </tr>
