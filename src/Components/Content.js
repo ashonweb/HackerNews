@@ -198,19 +198,14 @@ class Content extends React.Component {
   }
   
   hideshow =(objectid)=>{
-    //   console.log(objectid)\
-
-    
-
-
-    const qs = this.state.search_by_date_front.slice();
-    const currentQs = qs.filter((q) => q.objectID !== objectid);
+    const search_by_date_front_slice = this.state.search_by_date_front.slice();
+    const search_by_date_front_slice_now = search_by_date_front_slice.filter((q) => q.objectID !== objectid);
     // console.log(currentQs,"cureentdd")
     // const charLeft = 2000 - commentslength;
     // currentQs.comments = comments;
     // currentQs.length = charLeft;
     this.setState({
-        search_by_date_front: currentQs,
+        search_by_date_front: search_by_date_front_slice_now,
     },()=>{
         var href = window.location.href;
         let lastpath = (href.match(/([^\/]*)\/*$/)[1]);    
@@ -220,6 +215,26 @@ class Content extends React.Component {
     })
 
       
+  }
+  handleupVote = (id)=>{
+      console.log(id)
+      const search_by_date_front_slice = this.state.search_by_date_front.slice();
+      const search_by_date_front_slice_now = search_by_date_front_slice.find((q) => q.objectID === id);
+      console.log(search_by_date_front_slice_now)
+    //   search_by_date_front_slice_now.points = search_by_date_front_slice_now.points + 1 ;
+         search_by_date_front_slice_now.points = search_by_date_front_slice_now.points + 1 ;
+
+      this.setState({
+          upvote : search_by_date_front_slice_now.points +1,
+      },()=>{
+      })
+    var upvote = localStorage.getItem('upvote'+id) ? JSON.parse(localStorage.getItem('upvote')) : {};
+    localStorage.setItem('upvote'+id,JSON.stringify({
+    //    upvote: search_by_date_front_slice_now.points
+    upvote: search_by_date_front_slice_now.points
+
+    }))
+    console.log(localStorage.getItem('upvote'+id))
   }
   
 
@@ -258,7 +273,7 @@ class Content extends React.Component {
                                     {value.points}
                                 </td>
                                 <td style={{ color: "grey", fontSize: "10px" }} component="th" scope="row">
-                                    <img style={{ width: "20px", height: "20px", cursor: "pointer" }} src={arrow} />
+                                    <img style={{ width: "20px", height: "20px", cursor: "pointer" }} onClick={()=>this.handleupVote(value.objectID)} src={arrow} />
                                 </td>
                                 <td className="title_url_author" component="th" scope="row">
                             {value.title} <span><a style={{ color: "grey", fontSize: "10px" }} href={value.url}>{value.url}</a></span> <span style={{ color: "grey", fontSize: "10px" }}>by</span> <span style={{ color: "black", fontSize: "10px" }}>{value.author}</span> <span style= {{ color: "grey", fontSize: "10px" }}>{this.timeSince(Date.parse(value.created_at))} ago </span> <span onClick={() => this.hideshow(value.objectID)} style={{ cursor:"pointer",color: "black", fontSize: "10px" }}>[hide]</span>
