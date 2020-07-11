@@ -76,3 +76,11 @@ tr:nth-child(odd) {
     color: #ff7412;
     cursor: pointer;;
   }
+
+  .recharts-wrapper {
+    height: 300px !important;
+  }
+  .recharts-text .recharts-label{
+    margin: 10px !important;
+    
+  }
