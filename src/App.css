@@ -82,5 +82,19 @@ tr:nth-child(odd) {
   }
   .recharts-text .recharts-label{
     margin: 10px !important;
-    
+
+  }
+
+  .valueshow{
+    color: #b33c00;
+
+    ;
+  }
+  .valuemore{
+    color: #ce802f;
+
+  }
+  
+  .valueevenmore{
+    color: orangered;
   }

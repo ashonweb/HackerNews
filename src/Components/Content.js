@@ -318,9 +318,7 @@ class Content extends React.Component {
                                     <td scomponent="th" scope="row">
                                         {(value.num_comments)}
                                     </td>
-                                    <td style={{
-                                        color: value.points <= 60 ? 'black' : 'blue'
-                                    }} component="th" scope="row">
+                                    <td className={"value" +((value.points >= 50 && value.points < 80 ? "show" : "")||((value.points >= 60 && value.points < 100 ? "more" : ""))||((value.points >= 100 ? "evenmore" : "")))}component="th" scope="row">
                                         {value.points}
                                     </td>
                                     <td style={{ color: "grey", fontSize: "10px" }} component="th" scope="row">
