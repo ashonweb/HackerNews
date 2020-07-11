@@ -2,54 +2,8 @@ import React from 'react';
 import '../App.css';
 import arrow from '../arrow1.png';
 import { withRouter } from 'react-router-dom';
-
 import Divider from '@material-ui/core/Divider';
-import { LineChart, ReferenceLine, Line, CartesianGrid, XAxis, YAxis, Tooltip, Bar, BarChart, Legend, Label, Area, AreaChart, } from 'recharts';
-const data = [
-    {
-        "name": "Page A",
-        "uv": 4000,
-        "pv": 2400,
-        "amt": 2400
-    },
-    {
-        "name": "Page B",
-        "uv": 3000,
-        "pv": 1398,
-        "amt": 2210
-    },
-    {
-        "name": "Page C",
-        "uv": 2000,
-        "pv": 9800,
-        "amt": 2290
-    },
-    {
-        "name": "Page D",
-        "uv": 2780,
-        "pv": 3908,
-        "amt": 2000
-    },
-    {
-        "name": "Page E",
-        "uv": 1890,
-        "pv": 4800,
-        "amt": 2181
-    },
-    {
-        "name": "Page F",
-        "uv": 2390,
-        "pv": 3800,
-        "amt": 2500
-    },
-    {
-        "name": "Page G",
-        "uv": 3490,
-        "pv": 4300,
-        "amt": 2100
-    }
-]
-
+import { LineChart, ResponsiveContainer, Line, CartesianGrid, XAxis, YAxis, Tooltip, Legend, } from 'recharts';
 
 class Content extends React.Component {
     constructor(props) {
@@ -65,7 +19,7 @@ class Content extends React.Component {
     async componentDidMount() {
         var href = window.location.href;
         // console.log(href, "href")
-        console.log(href.match(/([^\/]*)\/*$/)[1], "rtyupoxcvbnl");
+        // console.log(href.match(/([^\/]*)\/*$/)[1], "rtyupoxcvbnl");
         let lastpath = (href.match(/([^\/]*)\/*$/)[1]);
         // console.log(('http://hn.algolia.com/api/v1/search_by_date?tags=story&numericFilters=num_comments>2&page=' + lastpath))
         var ios = localStorage.getItem('saveddata' + lastpath) ? JSON.parse(localStorage.getItem(`saveddata` + lastpath)) : [];
@@ -73,22 +27,23 @@ class Content extends React.Component {
             this.setState({
                 search_by_date_front: ios
             }, () => {
-                console.log(this.state.search_by_date_front)
+                // console.log(this.state.search_by_date_front)
             })
         }
         else {
             await fetch('http://hn.algolia.com/api/v1/search_by_date?tags=story&numericFilters=num_comments>2&page=' + lastpath)
                 .then(data => data.json())
                 .then(data => {
-                    console.log(data)
+                    // console.log(data)
                     const { hits } = data
-                    console.log(hits);
+                    // console.log(hits);
                     this.setState({
                         search_by_date_front: hits
                     })
                 })
                 .catch((err) => {
-                    console.log("Can’t access " + " response. Blocked by browser?", err);
+                    console.log(err);
+                    alert("something went wrong please try later")
 
                 })
             localStorage.setItem('saveddata' + lastpath, JSON.stringify(
@@ -131,8 +86,15 @@ class Content extends React.Component {
                 }
             }, () => {
                 // console.log(this.state.page, "prev")
+                if(this.state.page === 0){
+                    this.props.history.push('/')
+
+                }
+                else{
                 this.props.history.push('/Previous/page/' + this.state.page)
                 this.api();
+
+                }
             })
         }
     }
@@ -159,7 +121,8 @@ class Content extends React.Component {
                     })
                 })
                 .catch((err) => {
-                    console.log("Can’t access " + " response. Blocked by browser?", err);
+                    console.log( err);
+                    alert("something went wrong please try again")
 
                 })
             localStorage.setItem('saveddata' + lastpath, JSON.stringify(
@@ -219,7 +182,7 @@ class Content extends React.Component {
 
     }
     handleupVote = (id) => {
-        console.log(id)
+        // console.log(id)
         //   const search_by_date_front_slice = this.state.search_by_date_front.slice();
         //   const search_by_date_front_slice_now = search_by_date_front_slice.find((q) => q.objectID === id);
         //   console.log(search_by_date_front_slice_now)
@@ -244,7 +207,7 @@ class Content extends React.Component {
 
         // console.log(localStorage.getItem('upvote'+id))
         let abc = (JSON.parse(localStorage.getItem('upvote' + id)))
-        console.log(abc)
+        // console.log(abc)
         const search_by_date_front_slice = this.state.search_by_date_front.slice();
         const search_by_date_front_slice_now = search_by_date_front_slice.find((q) => q.objectID === id);
         //   console.log(search_by_date_front_slice_now)
@@ -254,34 +217,16 @@ class Content extends React.Component {
             upvote: search_by_date_front_slice_now.points,
             search_by_date_front: search_by_date_front_slice,
         }, () => {
-
-
             //    console.log(this.state.upvote)
             localStorage.setItem('upvote' + id, JSON.stringify(
                 this.state.upvote
             ))
-            console.log(this.state.upvote, "ppppppp")
+            // console.log(this.state.upvote, "ppppppp")
             var href = window.location.href;
             let lastpath = (href.match(/([^\/]*)\/*$/)[1]);
             localStorage.setItem('saveddata' + lastpath, JSON.stringify(
                 this.state.search_by_date_front
             ))
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
         })
 
@@ -289,11 +234,11 @@ class Content extends React.Component {
 
 
     render() {
-        const { search_by_date_story, search_by_date_front, next } = this.state
+        const { search_by_date_front } = this.state
         let b = ((this.state.search_by_date_front).length !== 0);
         let a = new Date();
         // console.log(a.toISOString())
-        var aDay = 24 * 60 * 60 * 1000;
+        // var aDay = 24 * 60 * 60 * 1000;
 
         //   console.log(this.timeSince(new Date(Date.now()-aDay)));
         //   console.log(this.timeSince(new Date(Date.now()-aDay*2)));
@@ -315,16 +260,16 @@ class Content extends React.Component {
                                 {this.state.hide === i ? <p>{value.title}</p> : null}
                                 <tr key={i}>
 
-                                    <td scomponent="th" scope="row">
+                                    <td  >
                                         {(value.num_comments)}
                                     </td>
-                                    <td className={"value" +((value.points >= 50 && value.points < 80 ? "show" : "")||((value.points >= 60 && value.points < 100 ? "more" : ""))||((value.points >= 100 ? "evenmore" : "")))}component="th" scope="row">
+                                    <td className={"value" + ((value.points >= 50 && value.points < 80 ? "show" : "") || ((value.points >= 60 && value.points < 100 ? "more" : "")) || ((value.points >= 100 ? "evenmore" : "")))}>
                                         {value.points}
                                     </td>
-                                    <td style={{ color: "grey", fontSize: "10px" }} component="th" scope="row">
-                                        <img style={{ width: "20px", height: "20px", cursor: "pointer" }} onClick={() => this.handleupVote(value.objectID)} src={arrow} />
+                                    <td style={{ color: "grey", fontSize: "10px" }} >
+                                        <img style={{ width: "20px", height: "20px", cursor: "pointer" }} onClick={() => this.handleupVote(value.objectID)} src={arrow} alt="no arrow" />
                                     </td>
-                                    <td className="title_url_author" component="th" scope="row">
+                                    <td className="title_url_author"  >
                                         {value.title} <span><a style={{ color: "grey", fontSize: "10px" }} href={value.url}>{value.url}</a></span> <span style={{ color: "grey", fontSize: "10px" }}>by</span> <span style={{ color: "black", fontSize: "10px" }}>{value.author}</span> <span style={{ color: "grey", fontSize: "10px" }}>{this.timeSince(Date.parse(value.created_at))} ago </span> <span onClick={() => this.hideshow(value.objectID)} style={{ cursor: "pointer", color: "black", fontSize: "10px" }}>[hide]</span>
                                     </td>
 
@@ -348,36 +293,37 @@ class Content extends React.Component {
 
                     </button>
                 </div>
+                <Divider style={{background:"#ff7412",height:"2px"}}/>
                 <>
-                    <LineChart width={1000} height={250} data={this.state.search_by_date_front}
-                        margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="objectID" label={{ angle: 0, value: 'News ID', position: 'insideBottom', textAnchor: 'middle' }}>
-                        </XAxis>
-                        <YAxis dataKey="points" label={{ value: 'upVotes', angle: -90, position: 'insideLeft', textAnchor: 'middle' }} />
-                        <Tooltip />
-                        <Legend />
-                        <Line type="monotone" dataKey="points" stroke="#8884d8" />
-                        <Line type="monotone" dataKey="objectID" stroke="#82ca9d" />
-                    </LineChart>
-                    {/* <AreaChart width={1030} height={250} data={this.state.search_by_date_front}
-                        margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
-                        <defs>
-                            <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="5%" stopColor="#8884d8" stopOpacity={0.8} />
-                                <stop offset="95%" stopColor="#8884d8" stopOpacity={0} />
-                            </linearGradient>
-                            <linearGradient id="colorPv" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="5%" stopColor="#82ca9d" stopOpacity={0.8} />
-                                <stop offset="95%" stopColor="#82ca9d" stopOpacity={0} />
-                            </linearGradient>
-                        </defs>
-                        <XAxis dataKey="objectID" />
-                        <YAxis dataKey="points" />
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <Tooltip />
-                        <Area type="monotone" dataKey="points" stroke="#82ca9d" fillOpacity={1} fill="url(#colorPv)" />
-                    </AreaChart> */}
+                    {/* <ResponsiveContainer width="99%">
+                        <LineChart width={1000} height={250} data={this.state.search_by_date_front}
+                            margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+                            <CartesianGrid strokeDasharray="3 3" />
+                            <XAxis dataKey="objectID" label={{ angle: 0, value: 'News ID', position: 'insideBottom', textAnchor: 'middle' }}>
+                            </XAxis>
+                            <YAxis dataKey="points" label={{ value: 'upVotes', angle: -90, position: 'insideLeft', textAnchor: 'middle' }} />
+                            <Tooltip />
+                            <Legend />
+                            <Line type="monotone" dataKey="points" stroke="#8884d8" />
+                            <Line type="monotone" dataKey="objectID" stroke="#82ca9d" />
+                        </LineChart>
+
+
+                    </ResponsiveContainer> */}
+                        <ResponsiveContainer className="graph" width="100%" height={300}>
+
+                            <LineChart  data={this.state.search_by_date_front}
+                            margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+                            <CartesianGrid strokeDasharray="3 3" />
+                            <XAxis dataKey="objectID" />
+                            <YAxis dataKey="points" label={{ value: 'upVotes === points', angle: -90, position: 'insideBottomLeft', textAnchor: 'middle' }} />
+                            <Tooltip />
+                            <Legend />
+                            <Line type="monotone" dataKey="points" stroke="#8884d8" />
+                            <Line type="monotone" dataKey="objectID" stroke="#82ca9d" />
+                        </LineChart>
+                        </ResponsiveContainer>
+                        <Divider style={{background:"#ff7412",height:"3px"}}/>
                 </>
 
             </>

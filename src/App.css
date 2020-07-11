@@ -1,6 +1,7 @@
 .App {
   text-align: center;
-  margin:0 150px ;
+  margin:0 50px ;
+  background-color: rgb(219, 219, 210);
 }
 
 .App-logo {
@@ -27,6 +28,21 @@
 
 .App-link {
   color: #61dafb;
+}
+.parentGrid {
+  display: grid;
+  grid-template-areas:
+    'rodoabad'
+    'otherGrid';
+    grid-template-columns: 100%;
+}
+
+.otherChildGrid {
+  grid-area: otherGrid
+}
+
+.rodoabad {
+  grid-area: rodoabad;
 }
 
 @keyframes App-logo-spin {
@@ -69,12 +85,14 @@ tr:nth-child(odd) {
   .buttons{
     display: flex;
     justify-content: flex-end;
+    margin: 5px 0;
   }
   .prev ,.next {
     background: none;
     border: none;
     color: #ff7412;
-    cursor: pointer;;
+    cursor: pointer;
+    height: 20px !important;
   }
 
   .recharts-wrapper {
@@ -97,4 +115,35 @@ tr:nth-child(odd) {
   
   .valueevenmore{
     color: orangered;
+  }
+
+  .graph{
+    margin: 25px 0 0;
+  }
+  
+  @media only screen and (max-width: 768px) {
+    body {
+      /* background-color: lightblue; */
+    }
+    .App {
+      /* text-align: center; */
+      margin: 0px;
+      width: fit-content;
+  }
+ 
+  .parentGrid {
+    display: grid;
+    grid-template-areas:
+      'rodoabad'
+      'otherGrid';
+      grid-template-columns: 100%;
+  }
+  
+  .otherChildGrid {
+    grid-area: otherGrid
+  }
+  
+  .rodoabad {
+    grid-area: rodoabad;
+  }
   }
