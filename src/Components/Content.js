@@ -21,9 +21,11 @@ class Content extends React.Component {
         // console.log(href, "href")
         // console.log(href.match(/([^\/]*)\/*$/)[1], "rtyupoxcvbnl");
         let lastpath = (href.match(/([^\/]*)\/*$/)[1]);
-        // console.log(('http://hn.algolia.com/api/v1/search_by_date?tags=story&numericFilters=num_comments>2&page=' + lastpath))
+        //  console.log(('http://hn.algolia.com/api/v1/search_by_date?tags=front_page&numericFilters=num_comments>2&page=' + lastpath))
         var ios = localStorage.getItem('saveddata' + lastpath) ? JSON.parse(localStorage.getItem(`saveddata` + lastpath)) : [];
         if (ios.length !== 0) {
+            console.log(ios)
+            console.log("if constion")
             this.setState({
                 search_by_date_front: ios
             }, () => {
@@ -31,10 +33,11 @@ class Content extends React.Component {
             })
         }
         else {
-            await fetch('http://hn.algolia.com/api/v1/search_by_date?tags=story&numericFilters=num_comments>2&page=' + lastpath)
+            console.log("component did mount else coditon")
+            await fetch('http://hn.algolia.com/api/v1/search_by_date?tags=story&numericFilters=num_comments>2')
                 .then(data => data.json())
                 .then(data => {
-                    // console.log(data)
+                    console.log(data)
                     const { hits } = data
                     // console.log(hits);
                     this.setState({
@@ -63,6 +66,7 @@ class Content extends React.Component {
             })
         }
         else {
+            
 
             this.setState({
                 page: page + 1,
@@ -86,15 +90,11 @@ class Content extends React.Component {
                 }
             }, () => {
                 // console.log(this.state.page, "prev")
-                if(this.state.page === 0){
-                    this.props.history.push('/')
-
-                }
-                else{
+               
                 this.props.history.push('/Previous/page/' + this.state.page)
                 this.api();
 
-                }
+               
             })
         }
     }
@@ -105,6 +105,7 @@ class Content extends React.Component {
         let lastpath = (href.match(/([^\/]*)\/*$/)[1]);
         var savedata_lastpath = localStorage.getItem('saveddata' + lastpath) ? JSON.parse(localStorage.getItem(`saveddata` + lastpath)) : [];
         if (savedata_lastpath.length !== 0) {
+            console.log(savedata_lastpath)
             this.setState({
                 search_by_date_front: savedata_lastpath
             })
@@ -115,9 +116,13 @@ class Content extends React.Component {
                 .then(data => {
                     // console.log(data)
                     const { hits } = data
-                    // console.log(hits);
+                     console.log(hits);
                     this.setState({
                         search_by_date_front: hits
+                    },()=>{
+                        localStorage.setItem('saveddata' + lastpath, JSON.stringify(
+                            this.state.search_by_date_front
+                        ))
                     })
                 })
                 .catch((err) => {
@@ -125,9 +130,7 @@ class Content extends React.Component {
                     alert("something went wrong please try again")
 
                 })
-            localStorage.setItem('saveddata' + lastpath, JSON.stringify(
-                this.state.search_by_date_front
-            ))
+           
         }
 
     }
