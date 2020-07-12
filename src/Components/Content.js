@@ -68,7 +68,7 @@ class Content extends React.Component {
         console.log(pagenumberfromlocalstorae)
         if (pagenumberfromlocalstorae === 0) {
             this.props.history.push('/')
-            alert("no going further")
+            alert("Can't go previous as this is the home page")
 
         }
         else {
