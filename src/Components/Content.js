@@ -8,141 +8,111 @@ import { LineChart, ResponsiveContainer, Line, CartesianGrid, XAxis, YAxis, Tool
 class Content extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {
+        var href = window.location.href;
+        let lastpath = (href.match(/([^\/]*)\/*$/)[1]);
+
+       const storyUpdates = JSON.parse(localStorage.getItem('storyUpdates')) || {};
+       this.state = {
             search_by_date_front: [],
             page: 0,
             upvote: 0,
-            hide: false,
-
+            storyUpdates,
         }
     }
-    async componentDidMount() {
+    async componentDidMount() {        
         var href = window.location.href;
-        // console.log(href, "href")
-        // console.log(href.match(/([^\/]*)\/*$/)[1], "rtyupoxcvbnl");
         let lastpath = (href.match(/([^\/]*)\/*$/)[1]);
-        //  console.log(('http://hn.algolia.com/api/v1/search_by_date?tags=front_page&numericFilters=num_comments>2&page=' + lastpath))
-        var ios = localStorage.getItem('saveddata' + lastpath) ? JSON.parse(localStorage.getItem(`saveddata` + lastpath)) : [];
-        if (ios.length !== 0) {
-            console.log(ios)
-            console.log("if constion")
-            this.setState({
-                search_by_date_front: ios
-            }, () => {
-                // console.log(this.state.search_by_date_front)
+        console.log("component did mount else coditon")
+        await fetch('http://hn.algolia.com/api/v1/search_by_date?tags=story&numericFilters=num_comments>2&page=' + lastpath)
+            .then(data => data.json())
+            .then(data => {
+                const { hits } = data
+                this.setState({
+                    search_by_date_front: hits
+                })
             })
-        }
-        else {
-            console.log("component did mount else coditon")
-            await fetch('http://hn.algolia.com/api/v1/search_by_date?tags=story&numericFilters=num_comments>2')
-                .then(data => data.json())
-                .then(data => {
-                    console.log(data)
-                    const { hits } = data
-                    // console.log(hits);
-                    this.setState({
-                        search_by_date_front: hits
-                    })
-                })
-                .catch((err) => {
-                    console.log(err);
-                    alert("something went wrong please try later")
+            .catch((err) => {
+                console.log(err);
+                alert("something went wrong please try later")
 
-                })
-            localStorage.setItem('saveddata' + lastpath, JSON.stringify(
-                this.state.search_by_date_front
-            ))
-        }
+            })
+       
     }
     onNextPage = () => {
+        var href = window.location.href;
+        let lastpath = (href.match(/([^\/]*)\/*$/)[1]);
         const { page } = this.state
-        if (page === 0) {
-            this.setState({
-                page: page + 1,
-            }, () => {
-                this.props.history.push('/Next/page/' + this.state.page)
-                this.api()
-                // console.log(this.state.page, "ppoopo")
-            })
+        console.log(lastpath)
+        if (lastpath === '#') {
+            localStorage.setItem('pageno', JSON.stringify(
+                0
+            ))
         }
-        else {
-            
-
-            this.setState({
-                page: page + 1,
-            }, () => {
-                this.props.history.push('/Next/page/' + this.state.page)
-                this.api()
-                // console.log(this.state.page, "ppoopo")
-            })
-        }
+        let pagenumberfromlocalstorae = JSON.parse(localStorage.getItem('pageno'))
+        console.log(pagenumberfromlocalstorae)
+        this.setState({
+            page: pagenumberfromlocalstorae + 1,
+        }, () => {
+            console.log(this.state.page)
+            this.props.history.push('/Next/page/' + this.state.page)
+            this.api()
+            localStorage.setItem('pageno', JSON.stringify(
+                this.state.page
+            ))
+        })
     }
     onPrevPage = () => {
         const { page } = this.state
-        if (page === 0) {
-            alert("no going further")
+        console.log(page)
+        let pagenumberfromlocalstorae = JSON.parse(localStorage.getItem('pageno'))
+        console.log(pagenumberfromlocalstorae)
+        if (pagenumberfromlocalstorae === 0) {
             this.props.history.push('/')
+            alert("no going further")
+
         }
         else {
-            this.setState(prevState => {
-                return {
-                    page: prevState.page - 1
-                }
+            this.setState({
+                page: pagenumberfromlocalstorae - 1,
             }, () => {
-                // console.log(this.state.page, "prev")
-               
+                console.log(page)
                 this.props.history.push('/Previous/page/' + this.state.page)
                 this.api();
+                localStorage.setItem('pageno', JSON.stringify(
+                    this.state.page
+                ))
 
-               
             })
         }
+
     }
     api = () => {
         var href = window.location.href;
-        // console.log(href, "href")
-        // console.log(href.match(/([^\/]*)\/*$/)[1], "rtyupoxcvbnl");
         let lastpath = (href.match(/([^\/]*)\/*$/)[1]);
         var savedata_lastpath = localStorage.getItem('saveddata' + lastpath) ? JSON.parse(localStorage.getItem(`saveddata` + lastpath)) : [];
-        if (savedata_lastpath.length !== 0) {
-            console.log(savedata_lastpath)
-            this.setState({
-                search_by_date_front: savedata_lastpath
+        fetch('http://hn.algolia.com/api/v1/search_by_date?tags=story&numericFilters=num_comments>2&page=' + lastpath)
+            .then(data => data.json())
+            .then(data => {
+                console.log(data)
+                const { hits } = data
+                console.log(hits, 'apifunction');
+                this.setState({
+                    search_by_date_front: hits
+                }, () => {
+                    localStorage.setItem('saveddata' + lastpath, JSON.stringify(
+                        this.state.search_by_date_front
+                    ))
+                })
             })
-        }
-        else {
-            fetch('http://hn.algolia.com/api/v1/search_by_date?tags=story&numericFilters=num_comments>2&page=' + lastpath)
-                .then(data => data.json())
-                .then(data => {
-                    // console.log(data)
-                    const { hits } = data
-                     console.log(hits);
-                    this.setState({
-                        search_by_date_front: hits
-                    },()=>{
-                        localStorage.setItem('saveddata' + lastpath, JSON.stringify(
-                            this.state.search_by_date_front
-                        ))
-                    })
-                })
-                .catch((err) => {
-                    console.log( err);
-                    alert("something went wrong please try again")
+            .catch((err) => {
+                console.log(err);
+                alert("something went wrong please try again")
 
-                })
-           
-        }
-
+            })
     }
-
-
-
     timeSince = (date) => {
-
         var seconds = Math.floor((new Date() - date) / 1000);
-
         var interval = Math.floor(seconds / 31536000);
-
         if (interval > 1) {
             return interval + " years";
         }
@@ -166,101 +136,82 @@ class Content extends React.Component {
     }
 
     hideshow = (objectid) => {
+
         const search_by_date_front_slice = this.state.search_by_date_front.slice();
-        const search_by_date_front_slice_now = search_by_date_front_slice.filter((q) => q.objectID !== objectid);
-        // console.log(currentQs,"cureentdd")
-        // const charLeft = 2000 - commentslength;
-        // currentQs.comments = comments;
-        // currentQs.length = charLeft;
+        const search_by_date_front_slice_now = search_by_date_front_slice.find((q) => q.objectID === objectid);
+        
+        const { storyUpdates } = this.state;
+        if (storyUpdates[objectid]) {
+            storyUpdates[objectid].hidden = true;
+        } else {
+            storyUpdates[objectid] = {
+                ...search_by_date_front_slice_now,
+                hidden: true,
+            }
+        }
         this.setState({
-            search_by_date_front: search_by_date_front_slice_now,
-        }, () => {
-            var href = window.location.href;
-            let lastpath = (href.match(/([^\/]*)\/*$/)[1]);
-            localStorage.setItem('saveddata' + lastpath, JSON.stringify(
-                this.state.search_by_date_front
-            ))
-        })
+            storyUpdates: {...storyUpdates},
+        });
+        localStorage.setItem('storyUpdates', JSON.stringify(storyUpdates));
 
 
     }
     handleupVote = (id) => {
-        // console.log(id)
-        //   const search_by_date_front_slice = this.state.search_by_date_front.slice();
-        //   const search_by_date_front_slice_now = search_by_date_front_slice.find((q) => q.objectID === id);
-        //   console.log(search_by_date_front_slice_now)
-        // //   search_by_date_front_slice_now.points = search_by_date_front_slice_now.points + 1 ;
-        //      search_by_date_front_slice_now.points = search_by_date_front_slice_now.points + 1 ;
-        //      var href = window.location.href;
-        //      let lastpath = (href.match(/([^\/]*)\/*$/)[1]);    
-        //     let a = JSON.parse(localStorage.getItem('saveddata'+lastpath))
-        //     console.log(a)
-        //   this.setState({
-        //       upvote : search_by_date_front_slice_now.points +1,
-        //   },()=>{
-        //   })
-        // var upvote = localStorage.getItem('upvote'+id) ? JSON.parse(localStorage.getItem('upvote'+id)) : {};
-        // localStorage.setItem('upvote'+id,JSON.stringify({
-        // //    upvote: search_by_date_front_slice_now.points
-        // upvote: search_by_date_front_slice_now.points
-
-        // }))
-        // console.log(localStorage.getItem('upvote'+id))
-        var upvote_id = localStorage.getItem('upvote' + id) ? JSON.parse(localStorage.getItem('upvote' + id)) : {}
-
-        // console.log(localStorage.getItem('upvote'+id))
-        let abc = (JSON.parse(localStorage.getItem('upvote' + id)))
-        // console.log(abc)
         const search_by_date_front_slice = this.state.search_by_date_front.slice();
         const search_by_date_front_slice_now = search_by_date_front_slice.find((q) => q.objectID === id);
-        //   console.log(search_by_date_front_slice_now)
-        search_by_date_front_slice_now.points = search_by_date_front_slice_now.points + 1;
 
+        const { storyUpdates } = this.state;
+        if (storyUpdates[id]) {
+            storyUpdates[id].points = storyUpdates[id].points + 1;
+        } else {
+            storyUpdates[id] = {
+                ...search_by_date_front_slice_now,
+                points: search_by_date_front_slice_now.points + 1,
+            }
+        }
         this.setState({
-            upvote: search_by_date_front_slice_now.points,
-            search_by_date_front: search_by_date_front_slice,
-        }, () => {
-            //    console.log(this.state.upvote)
-            localStorage.setItem('upvote' + id, JSON.stringify(
-                this.state.upvote
-            ))
-            // console.log(this.state.upvote, "ppppppp")
-            var href = window.location.href;
-            let lastpath = (href.match(/([^\/]*)\/*$/)[1]);
-            localStorage.setItem('saveddata' + lastpath, JSON.stringify(
-                this.state.search_by_date_front
-            ))
-
-        })
+            storyUpdates: {...storyUpdates},
+        });
+        localStorage.setItem('storyUpdates', JSON.stringify(storyUpdates));
 
     }
 
 
     render() {
-        const { search_by_date_front } = this.state
+        
+        const { search_by_date_front, storyUpdates } = this.state
         let b = ((this.state.search_by_date_front).length !== 0);
-        let a = new Date();
-        // console.log(a.toISOString())
         // var aDay = 24 * 60 * 60 * 1000;
-
         //   console.log(this.timeSince(new Date(Date.now()-aDay)));
         //   console.log(this.timeSince(new Date(Date.now()-aDay*2)));
+        var href = window.location.href;
+        let lastpath = (href.match(/([^\/]*)\/*$/)[1]);
+        let processedStories = search_by_date_front.slice();
+        processedStories = processedStories.map((story) => {
+            if(storyUpdates[story.objectID]) {
+                return storyUpdates[story.objectID];
+            }
+            return story;
+        });
+
+        const graphData = processedStories.filter((story) => !story.hidden);
+       
         return (
             <>
-                {b ? <>
+                {b ? <div style={{overflowX:"auto"}}>
                     <table aria-label="simple table">
-
                         <tr style={{ background: "#f76600", color: "white", fontSize: 'x-small' }}>
                             <th>comments</th>
                             <th >vote Count</th>
                             <th >upvote</th>
                             <th >New Details</th>
                         </tr>
-
-
-                        {search_by_date_front.map((value, i) => (
+                        {processedStories.map((value, i) => {
+                            if (value.hidden) {
+                                return null;
+                            }
+                            return (
                             <>
-                                {this.state.hide === i ? <p>{value.title}</p> : null}
                                 <tr key={i}>
 
                                     <td  >
@@ -278,15 +229,11 @@ class Content extends React.Component {
 
                                 </tr>
                             </>
-
-                        ))
+                        )})
                         }
-
-
                     </table>
-                </> : <> </>
+                </div> :  <div style={{height:"150%"}}>  LOADING...... </div>
                 }
-
                 <div className="buttons">
                     <button onClick={this.onPrevPage} className="next"><strong style={{ fontSize: "smaller" }}>Previous</strong>
 
@@ -296,7 +243,7 @@ class Content extends React.Component {
 
                     </button>
                 </div>
-                <Divider style={{background:"#ff7412",height:"2px"}}/>
+                <Divider style={{ background: "#ff7412", height: "2px" }} />
                 <>
                     {/* <ResponsiveContainer width="99%">
                         <LineChart width={1000} height={250} data={this.state.search_by_date_front}
@@ -313,9 +260,9 @@ class Content extends React.Component {
 
 
                     </ResponsiveContainer> */}
-                        <ResponsiveContainer className="graph" width="100%" height={300}>
+                    <ResponsiveContainer className="graph" width="100%" height={300}>
 
-                            <LineChart  data={this.state.search_by_date_front}
+                        <LineChart data={graphData}
                             margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
                             <CartesianGrid strokeDasharray="3 3" />
                             <XAxis dataKey="objectID" />
@@ -325,8 +272,8 @@ class Content extends React.Component {
                             <Line type="monotone" dataKey="points" stroke="#8884d8" />
                             <Line type="monotone" dataKey="objectID" stroke="#82ca9d" />
                         </LineChart>
-                        </ResponsiveContainer>
-                        <Divider style={{background:"#ff7412",height:"3px"}}/>
+                    </ResponsiveContainer>
+                    <Divider style={{ background: "#ff7412", height: "3px" }} />
                 </>
 
             </>
